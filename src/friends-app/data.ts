@@ -11,6 +11,7 @@ export type User = {
 const friends = [
   {
     name: 'Marcos',
+    loggedIn: true,
     surname: 'Pérez',
     birthdate: 'Tue Sep 07 2021',
   },
@@ -28,7 +29,7 @@ export const appData = {
     name: 'Jesús',
     surname: 'García',
     birthdate: 'Tue Sep 07 2021',
-    profilePicture: ''
+    profilePicture: '',
     friends,
   },
 }
