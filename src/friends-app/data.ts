@@ -28,6 +28,7 @@ export const appData = {
     name: 'Jesús',
     surname: 'García',
     birthdate: 'Tue Sep 07 2021',
+    profilePicture: ''
     friends,
   },
 }
