@@ -1,0 +1,9 @@
+.MediaObject {
+  display: flex;
+}
+.MediaObject .vertical {
+  flex-direction: column;
+}
+.MediaObject .horizontal {
+  flex-direction: row;
+}
