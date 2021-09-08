@@ -1,5 +1,8 @@
+import React from 'react'
 // element:: VDOM
+
 const h = React.createElement
+
 const element = h(
   'div',
   { className: 'greeting', style: { display: 'flex' } },

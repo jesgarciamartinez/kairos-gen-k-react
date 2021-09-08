@@ -1,7 +1,7 @@
-import './App.css'
+import FriendsApp from './friends-app'
 
 function App() {
-  return <h1 className='greeting'>¡Hola Gen K desde un componente!</h1>
+  return <FriendsApp />
 }
 
 export default App

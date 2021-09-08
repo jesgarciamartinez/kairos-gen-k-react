@@ -2,10 +2,15 @@ import React from 'react'
 import './App.css'
 
 function App() {
-  return <CounterWithHook initialValue={3} />
+  return (
+    <>
+      <CounterWithClass initialValue={3} />
+      <CounterWithHook initialValue={3} />
+    </>
+  )
 }
 
-class Counter extends React.Component {
+class CounterWithClass extends React.Component {
   constructor(props) {
     super(props)
     this.state = {

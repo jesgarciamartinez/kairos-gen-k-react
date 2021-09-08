@@ -1,3 +1,5 @@
+import React from 'react'
+
 function Example() {
   return <h1 className='greeting'>¡Hola Gen K desde un componente!</h1>
 }
@@ -48,28 +50,5 @@ function UserCard({ name, surname }) {
     <MediaObject textContent={name} left={name} right={surname}>
       <div> child </div>
     </MediaObject>
-  )
-}
-
-function Landing() {
-  return (
-    <>
-      <Navbar>
-        <Link>Home</Link>
-        <Link>About</Link>
-        <Link>Contact</Link>
-      </Navbar>
-      <BackgroundImage>
-        <Text size='xl' tag='h1'></Text>
-      </BackgroundImage>
-      <HStack>
-        {/* {this.map(card => {
-          return <MediaObject direction='horizontal' />
-        })} */}
-        <MediaObject direction='vertical' />
-        <MediaObject direction='vertical' />
-        <MediaObject direction='vertical' />
-      </HStack>
-    </>
   )
 }
