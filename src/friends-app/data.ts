@@ -26,12 +26,13 @@ const friends = [
   },
 ]
 
+export const potentialFriends = []
 export const appData = {
   user: {
     loggedIn: false,
     name: 'Jesús',
     surname: 'García',
-    birthdate: 'Tue Sep 07 2021', // new Date().toDateString(),
+    birthdate: /*'Tue Sep 07 2021',*/ new Date().toDateString(),
     profilePicture:
       'https://images.dog.ceo/breeds/rottweiler/n02106550_10651.jpg',
     friends,

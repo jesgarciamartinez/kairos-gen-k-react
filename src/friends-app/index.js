@@ -101,7 +101,7 @@ function UserListCard({
         }}
       >
         <OnlineIndicator isOnline={loggedIn} />
-        <CloseButton onClick={onClose} />
+        <CloseButton onClick={onClose} text={'close'} />
       </div>
     </div>
   )
@@ -152,7 +152,11 @@ function LoggedInScreen({ onLogout, user, onAddFriend }) {
       </Text>
       {/* vertical separation? */}
       {user.friends.map(props => (
-        <UserListCard {...props} onClose={() => {}}></UserListCard>
+        <UserListCard
+          {...props}
+          onClose={() => {}}
+          key={props.name}
+        ></UserListCard>
       ))}
     </div>
   )
