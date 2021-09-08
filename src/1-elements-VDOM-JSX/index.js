@@ -1,6 +1,15 @@
 import React from 'react'
-// element:: VDOM
 
+/*
+  Modificar el DOM sin React
+*/
+const myElement = document.createElement('h1')
+myElement.classList.add('greeting')
+myElement.textContent = '¡Hola Gen K!'
+
+// document.getElementById('root').appendChild(myElement)
+
+// element:: VDOM
 const h = React.createElement
 
 const element = h(
