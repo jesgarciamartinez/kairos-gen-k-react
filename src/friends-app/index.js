@@ -210,13 +210,19 @@ function AddFriendScreen({ onAddFriend, onBack }) {
 
 export default function FriendsApp() {
   const [user, setUser] = useState(appData.user)
-  const [currentScreen, setCurrentScreen] = useState(
+  const [currentScreen, dispatch] = useReducer(
+    (oldScreen, action: {type: 'goTo', screen: 'LoggedInScreen' | }) => {
+      if (action.type === 'goTo') {
+        return action.screen
+      }
+      return oldScreen
+    },
     user.loggedIn ? 'LoggedInScreen' : 'LoggedOutScreen',
   )
-  function goTo(screenName) {
-    return () => setCurrentScreen(screenName)
+  function goTo(screen) {
+    return () => dispatch({type: 'goTo', screen})
   }
-  console.log(user)
+
   switch (currentScreen) {
     case 'LoggedInScreen':
       return (
@@ -235,7 +241,6 @@ export default function FriendsApp() {
         <AddFriendScreen
           onBack={goTo('LoggedInScreen')}
           onAddFriend={newFriend => {
-            console.log({ newFriend })
             setUser(user => ({
               ...user,
               friends: user.friends.concat(newFriend),

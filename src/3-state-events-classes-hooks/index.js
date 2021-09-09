@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useReducer, useEffect } from 'react'
 
 export default function App() {
   return (
@@ -8,7 +8,9 @@ export default function App() {
       {/* <ListState /> */}
       {/* <UncontrolledForm /> */}
       {/* <ControlledForm /> */}
-      <MyComponent />
+      {/* <MyComponent /> */}
+      {/* <MessagesSubscriber></MessagesSubscriber> */}
+      <UseEffectDependenciesDemonstration></UseEffectDependenciesDemonstration>
     </>
   )
 }
@@ -239,6 +241,193 @@ class MyComponent extends React.Component {
   componentDidMount() {
     this.inputRef.current.focus()
   }
+  componentWillReceiveProps(newProp) {}
+  componentWillUnmount() {}
+}
+
+function Input({ label, autoFocus = true, ...rest }) {
+  const inputRef = React.useRef()
+  React.useEffect(() => {
+    autoFocus && inputRef.current.focus()
+  }, [])
+  return (
+    <label>
+      {label}
+      <input ref={inputRef} {...rest} />
+    </label>
+  )
+}
+
+/* Mock de socket de mensajes */
+let key = 1
+const getRandomValueFromArray = arr =>
+  arr[Math.floor(Math.random() * arr.length)]
+const messages = [
+  { text: 'React mola!' },
+  { text: 'VDOM FTW' },
+  { text: 'Wow!' },
+]
+const messagesSocket = {
+  subscribe(userId, cb) {
+    const id = setInterval(() => {
+      cb({ id: key++, text: userId + getRandomValueFromArray(messages).text })
+    }, 1000)
+    return function unsubscribe() {
+      clearInterval(id)
+    }
+  },
+}
+
+export class MessagesSubscriber extends React.Component {
+  state = {
+    messages: [{ id: 0, text: 'firstMessage' }],
+  }
+  componentDidMount() {
+    // this.unsubscribe = messagesSocket.subscribe(this.props.id, message => {
+    //   this.setState(prev => ({
+    //     messages: prev.messages.concat(message),
+    //   }))
+    // })
+    //efecto 2
+  }
+  componentWillReceiveProps(newProps) {
+    this.unsubscribe()
+    this.unsubscribe = messagesSocket.subscribe(newProps.id, message => {
+      this.setState(prev => ({
+        messages: prev.messages.concat(message),
+      }))
+    })
+    //efecto 2
+  }
+
+  componentWillUnmount() {
+    this.unsubscribe()
+    //efecto 2
+  }
+
+  render() {
+    return (
+      <ul style={{ padding: 100 }}>
+        {this.state.messages.map(message => (
+          <li key={message.id}>{message.text}</li>
+        ))}
+      </ul>
+    )
+  }
+}
+
+const useMessages = userId => {
+  const [messages, setMessages] = useState([{ id: 0, text: 'firstMessage' }])
+  const concatMessage = message => {
+    setMessages(prev => prev.concat(message))
+  }
+
+  useEffect(() => {
+    return messagesSocket.subscribe(userId, concatMessage)
+
+    // const unsubscribe = messagesSocket.subscribe(userId, concatMessage)
+    // return () => {
+    //   unsubscribe()
+    // }
+
+    /* incluimos userId en el array de dependencias: cuando cambie userId se limpiará la
+        suscripción y volverá a suscribirse con el nuevo userId
+     */
+  }, [userId])
+
+  return messages
+}
+
+function MessagesSubscriber2({ userId }) {
+  const messages = useMessages(userId)
+  useEffect(() => {}, [])
+
+  return (
+    <ul style={{ padding: 100 }}>
+      {messages.map(message => (
+        <li key={message.id}>{message.text}</li>
+      ))}
+    </ul>
+  )
+}
+
+export function UseEffectDependenciesDemonstration() {
+  const [userId, setUserId] = useState(1)
+
+  return (
+    <div style={{ padding: 100 }}>
+      <button onClick={() => setUserId(2)}>Change to 2</button>
+      <MessagesSubscriber2 userId={userId} />
+    </div>
+  )
+}
+
+/* 
+    
+   useReducer
+
+   Un reducer es una función como la que le pasamos a Array.reduce:
+
+    const sumReducer = (acc, v) => acc + v
+    const sum = [1, 2, 3].reduce(sumReducer, 0)
+
+   reducer :: (a, b) -> a
+
+   En el caso de useReducer, el hook nos devuelve un array con
+   el estado y la función dispatch (llamada así por convención).
+   Dispatch toma una acción - un objeto de JS con la propiedad
+   type (por convención) y otra información que queramos mandar -
+   e invoca al reducer con el estado actual y la acción para obtener
+   el nuevo estado.
+ */
+
+const initialState = { count: 0 }
+
+/* counter implementado con useState */
+
+const useCounter = initialValue => {
+  const [count, setCount] = useState(initialValue || 0)
+
+  const increment = () => {
+    setCount(count => count + 1)
+  }
+  const decrement = () => {
+    setCount(count => count - 1)
+  }
+
+  return { count, increment, decrement }
+}
+
+const countReducer = (state, action) => {
+  if (action.type === 'increment') {
+    return {
+      count: state.count + action.payload,
+    }
+  }
+  if (action.type === 'decrement') {
+    return {
+      count: state.count - action.payload,
+    }
+  }
+}
+export const useCounterWithReducer = () => {
+  const [state, dispatch] = useReducer(countReducer, initialState)
+  const increment = () => dispatch({ type: 'increment', payload: 3 })
+  const decrement = () => dispatch({ type: 'decrement', payload: 3 })
+
+  return { count: state.count, increment, decrement }
+}
+
+export function CounterExample() {
+  const { count, increment, decrement } = useCounterWithReducer()
+
+  return (
+    <div>
+      <button onClick={increment}>+</button>
+      <div>{count}</div>
+      <button onClick={decrement}>-</button>
+    </div>
+  )
 }
 
 //#region immutability
