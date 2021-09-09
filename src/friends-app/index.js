@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { appData } from './data'
+import React, { useState, useRef, useEffect } from 'react'
+import { appData, potentialFriends } from './data'
 
 //#region utils
 /** @type {(datestring: string) => boolean}*/
@@ -64,6 +64,10 @@ function OnlineIndicator({ isOnline }) {
 function CloseButton(props) {
   return <Button {...props} text={'×'} />
 }
+function BackButton(props) {
+  return <Button {...props} text={'←'} />
+}
+
 function UserListCard({
   name,
   surname,
@@ -71,6 +75,7 @@ function UserListCard({
   profilePicture,
   loggedIn,
   onClose,
+  addFriend,
 }) {
   return (
     <div
@@ -90,6 +95,7 @@ function UserListCard({
           Happy birthday! 🎉
         </Text>
       ) : null}
+      {addFriend && <Button onClick={addFriend} text={'Add friend'} />}
       <div
         style={{
           display: 'flex',
@@ -101,9 +107,21 @@ function UserListCard({
         }}
       >
         <OnlineIndicator isOnline={loggedIn} />
-        <CloseButton onClick={onClose} text={'close'} />
+        {onClose && <CloseButton onClick={onClose} />}
       </div>
     </div>
+  )
+}
+function Input({ label, autoFocus = true, ...rest }) {
+  const inputRef = useRef()
+  useEffect(() => {
+    autoFocus && inputRef.current.focus()
+  }, [])
+  return (
+    <label>
+      {label}
+      <input ref={inputRef} {...rest} />
+    </label>
   )
 }
 
@@ -161,28 +179,70 @@ function LoggedInScreen({ onLogout, user, onAddFriend }) {
     </div>
   )
 }
+function AddFriendScreen({ onAddFriend, onBack }) {
+  const [name, setName] = useState('')
 
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <BackButton onClick={onBack} />
+      <Input
+        label={'Filter friends'}
+        value={name}
+        onChange={e => setName(e.target.value)}
+      ></Input>
+      <div>
+        {potentialFriends
+          .filter(friend =>
+            friend.name.toLowerCase().includes(name.toLowerCase()),
+          )
+          .map(friend => (
+            <UserListCard
+              {...friend}
+              key={friend.name}
+              addFriend={() => onAddFriend(friend)}
+            />
+          ))}
+      </div>
+    </div>
+  )
+}
 //#endregion
 
 export default function FriendsApp() {
+  const [user, setUser] = useState(appData.user)
   const [currentScreen, setCurrentScreen] = useState(
-    appData.user.loggedIn ? 'LoggedInScreen' : 'LoggedOutScreen',
+    user.loggedIn ? 'LoggedInScreen' : 'LoggedOutScreen',
   )
   function goTo(screenName) {
     return () => setCurrentScreen(screenName)
   }
-
+  console.log(user)
   switch (currentScreen) {
     case 'LoggedInScreen':
       return (
         <LoggedInScreen
           onLogout={goTo('LoggedOutScreen')}
-          user={appData.user}
+          user={user}
+          onAddFriend={goTo('AddFriendScreen')}
         ></LoggedInScreen>
       )
     case 'LoggedOutScreen':
       return (
         <LoggedOutScreen onLogin={goTo('LoggedInScreen')}></LoggedOutScreen>
+      )
+    case 'AddFriendScreen':
+      return (
+        <AddFriendScreen
+          onBack={goTo('LoggedInScreen')}
+          onAddFriend={newFriend => {
+            console.log({ newFriend })
+            setUser(user => ({
+              ...user,
+              friends: user.friends.concat(newFriend),
+            }))
+            setCurrentScreen('LoggedInScreen')
+          }}
+        ></AddFriendScreen>
       )
     default:
   }

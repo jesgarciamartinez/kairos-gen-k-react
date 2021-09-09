@@ -13,10 +13,11 @@ function Example1() {
   return (
     <>
       <h1 className='greeting'>¡Hola Gen K desde un componente!</h1>
+      {/* No invocamos a los componentes nosotros:*/}
       {Greeting({ name: 'Jesus', tag: 'span' })}
-      <Greeting name={'GenK'} style={{ background: 'red' }} />
+      {/* Llamamos a React.createElement*/}
+      <Greeting name={'GenK'} />
       {React.createElement(Greeting, { name: 'GenK' })}
-      <Greeting name={'grupo'} tag='aside' />
     </>
   )
 }

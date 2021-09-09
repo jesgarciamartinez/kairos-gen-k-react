@@ -28,6 +28,10 @@ const element2 = (
     <div style={{ backgroundColor: 'red' }}>
       Hola {element}
       {bool ? <div> {'Verdadero'} </div> : null}
+      {/* GOTCHA: cuidado con devolver valores serializables
+      que aparecen en la interfaz. En este caso, se puede pintar
+      '0' si no hay elementos en el array*/}
+      {users.length && <div>not empty</div>}
       {users.length === 0 ? (
         <div>Array is empty</div>
       ) : (

@@ -26,7 +26,24 @@ const friends = [
   },
 ]
 
-export const potentialFriends = []
+export const potentialFriends = [
+  {
+    name: 'Javi',
+    loggedIn: true,
+    surname: 'Pérez',
+    birthdate: 'Tue Sep 07 2021',
+    profilePicture:
+      'https://images.dog.ceo/breeds/havanese/00100trPORTRAIT_00100_BURST20191030212452971_COVER.jpg',
+  },
+  {
+    loggedIn: false,
+    name: 'Laura',
+    surname: '',
+    birthdate: 'Tue Sep 07 2021',
+    profilePicture:
+      'https://images.dog.ceo/breeds/germanshepherd/n02106662_2810.jpg',
+  },
+]
 export const appData = {
   user: {
     loggedIn: false,

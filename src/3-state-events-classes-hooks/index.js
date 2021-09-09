@@ -20,6 +20,9 @@ class CounterWithClass extends React.Component {
       count: props.initialValue ?? 0,
       showDouble: false,
     }
+    /*GOTCHA tenemos que hacer el bind del this de todos los métodos
+      en el constructor...
+    */
     this.increment = this.increment.bind(this)
   }
 
@@ -32,7 +35,15 @@ class CounterWithClass extends React.Component {
         console.log(this.state)
       },
     )
+    /*GOTCHA como setState es asíncrono, no podemos acceder
+    a this.state con el nuevo valor del estado aquí. Tenemos
+    que hacerlo usando el callback que podemos pasar como segundo
+    parámetro a setState
+    */
+    console.log(this.state)
   }
+  /*...GOTCHA o bien emplear esta sintaxis, 
+  o una arrow function inline en el JSX*/
   toggleDouble = () => {
     this.setState({ showDouble: !this.state.showDouble })
   }
@@ -167,6 +178,12 @@ class ControlledForm extends React.Component {
   }
 
   handleChange(e) {
+    /*GOTCHA para versiones de React anteriores a la 17:
+    React tenía un sistema de eventos sintéticos que reutilizaba y
+    cuyas propiedades seteaba a null, por lo que había que acceder
+    a la información del evento fuera del callback de setState
+    Esto [YA NO APLICA](https://es.reactjs.org/blog/2020/08/10/react-v17-rc.html#no-event-pooling) 
+    de la versión 17 en adelante*/
     const { name, value } = e.target
     this.setState(oldState => {
       return { [name]: value }
@@ -205,6 +222,7 @@ class ControlledForm extends React.Component {
   }
 }
 
+//Refs
 //1. Forma - React.createRef()
 
 class MyComponent extends React.Component {
